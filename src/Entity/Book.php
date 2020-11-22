@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\BookRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -78,6 +80,38 @@ class Book
      * @Groups({"book:read"})
      */
     private $createdAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Publisher::class, inversedBy="books")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"book:read", "book:write"})
+     */
+    private $publisher;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Genre::class, inversedBy="books")
+     * @Groups({"book:read", "book:write"})
+     */
+    private $genres;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=BindingFormat::class, inversedBy="books")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"book:read", "book:write"})
+     */
+    private $bindingFormat;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Author::class, inversedBy="books")
+     * @Groups({"book:read", "book:write"})
+     */
+    private $authors;
+
+    public function __construct()
+    {
+        $this->genres = new ArrayCollection();
+        $this->authors = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -188,6 +222,78 @@ class Book
     public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getPublisher(): ?Publisher
+    {
+        return $this->publisher;
+    }
+
+    public function setPublisher(?Publisher $publisher): self
+    {
+        $this->publisher = $publisher;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Genre[]
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->authors[] = $genre;
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        $this->genres->removeElement($genre);
+
+        return $this;
+    }
+
+    public function getBindingFormat(): ?BindingFormat
+    {
+        return $this->bindingFormat;
+    }
+
+    public function setBindingFormat(?BindingFormat $bindingFormat): self
+    {
+        $this->bindingFormat = $bindingFormat;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Author[]
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    public function addAuthor(Author $author): self
+    {
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(Author $author): self
+    {
+        $this->authors->removeElement($author);
 
         return $this;
     }
