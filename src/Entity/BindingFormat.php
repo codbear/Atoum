@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\BindingFormatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,24 +36,38 @@ class BindingFormat
     /**
      * @ORM\OneToMany(targetEntity=Book::class, mappedBy="bindingFormat", orphanRemoval=true)
      * @Groups({"bindingFormat:read"})
+     * @ApiSubresource
      */
     private $books;
 
+    /**
+     * BindingFormat constructor.
+     */
     public function __construct()
     {
         $this->books = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -68,6 +83,10 @@ class BindingFormat
         return $this->books;
     }
 
+    /**
+     * @param Book $book
+     * @return $this
+     */
     public function addBook(Book $book): self
     {
         if (!$this->books->contains($book)) {
@@ -78,6 +97,10 @@ class BindingFormat
         return $this;
     }
 
+    /**
+     * @param Book $book
+     * @return $this
+     */
     public function removeBook(Book $book): self
     {
         if ($this->books->removeElement($book)) {

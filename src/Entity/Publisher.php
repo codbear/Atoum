@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\PublisherRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -36,12 +37,14 @@ class Publisher
     /**
      * @ORM\OneToMany(targetEntity=Book::class, mappedBy="publisher", orphanRemoval=true)
      * @Groups({"publisher:read"})
+     * @ApiSubresource
      */
     private $books;
 
     /**
      * @ORM\OneToMany(targetEntity=PublisherCollection::class, mappedBy="publisher", orphanRemoval=true)
      * @Groups({"publisher:read"})
+     * @ApiSubresource
      */
     private $collections;
 
