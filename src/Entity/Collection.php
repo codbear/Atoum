@@ -30,19 +30,55 @@ class Collection
      */
     private $name;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Publisher::class, inversedBy="collections")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"collection:read", "collection:write"})
+     */
+    private $publisher;
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Publisher|null
+     */
+    public function getPublisher(): ?Publisher
+    {
+        return $this->publisher;
+    }
+
+    /**
+     * @param Publisher|null $publisher
+     * @return $this
+     */
+    public function setPublisher(?Publisher $publisher): self
+    {
+        $this->publisher = $publisher;
 
         return $this;
     }
