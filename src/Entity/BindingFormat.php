@@ -13,7 +13,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"bindingFormat:read"}},
- *     denormalizationContext={"groups"={"bindingFormat:write"}}
+ *     denormalizationContext={"groups"={"bindingFormat:write"}},
+ *     collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"}
+ *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass=BindingFormatRepository::class)
  */
@@ -29,7 +35,7 @@ class BindingFormat
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"bindingFormat:read", "bindingFormat:write"})
+     * @Groups({"bindingFormat:read"})
      */
     private $name;
 
