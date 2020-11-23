@@ -13,7 +13,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"author:read"}},
- *     denormalizationContext={"groups"={"author:write"}}
+ *     denormalizationContext={"groups"={"author:write"}},
+ *     collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"},
+ *         "post"={"security"="is_granted('ROLE_USER')"}
+ *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('get', object)"},
+ *         "patch"={"security"="is_granted('edit', object)"},
+ *         "put"={"security"="is_granted('edit', object)"},
+ *         "delete"={"security"="is_granted('delete', object)"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass=AuthorRepository::class)
  */
@@ -39,6 +49,13 @@ class Author
      * @ApiSubresource
      */
     private $books;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="authors")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"author:read"})
+     */
+    private $owner;
 
     /**
      * Author constructor.
@@ -106,6 +123,25 @@ class Author
         if ($this->books->removeElement($book)) {
             $book->removeAuthor($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param User|null $owner
+     * @return $this
+     */
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }

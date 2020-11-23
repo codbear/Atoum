@@ -4,17 +4,18 @@
 namespace App\DataPersister;
 
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Security;
 
-class UserDataPersister implements ContextAwareDataPersisterInterface
+/**
+ * Class UserDataPersister
+ * @package App\DataPersister
+ */
+class UserDataPersister extends DataPersister
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $_entityManager;
     /**
      * @var UserPasswordEncoderInterface
      */
@@ -22,9 +23,11 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function __construct(
         EntityManagerInterface $entityManager,
+        RequestStack $request,
+        Security $security,
         UserPasswordEncoderInterface $passwordEncoder
     ) {
-        $this->_entityManager = $entityManager;
+        parent::__construct($entityManager, $request, $security);
         $this->_passwordEncoder = $passwordEncoder;
     }
 
@@ -48,16 +51,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
             )
         );
 
-        $this->_entityManager->persist($data);
-        $this->_entityManager->flush();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function remove($data, array $context = [])
-    {
-        $this->_entityManager->remove($data);
-        $this->_entityManager->flush();
+        $this->entityManager->persist($data);
+        $this->entityManager->flush();
     }
 }

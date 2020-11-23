@@ -61,11 +61,19 @@ class User implements UserInterface
     private $books;
 
     /**
+     * @ORM\OneToMany(targetEntity=Author::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups({"user:read"})
+     * @ApiSubresource
+     */
+    private $authors;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         $this->books = new ArrayCollection();
+        $this->authors = new ArrayCollection();
     }
 
     /**
@@ -108,15 +116,6 @@ class User implements UserInterface
     }
 
     /**
-     * @param string $roles
-     * @return bool
-     */
-    public function hasRoles(string $roles): bool
-    {
-        return in_array($roles, $this->roles);
-    }
-
-    /**
      * @param array $roles
      * @return $this
      */
@@ -128,11 +127,20 @@ class User implements UserInterface
     }
 
     /**
+     * @param string $roles
+     * @return bool
+     */
+    public function hasRoles(string $roles): bool
+    {
+        return in_array($roles, $this->roles);
+    }
+
+    /**
      * @see UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     /**
@@ -170,7 +178,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     /**
@@ -216,6 +224,44 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($book->getOwner() === $this) {
                 $book->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Author[]
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    /**
+     * @param Author $author
+     * @return $this
+     */
+    public function addAuthor(Author $author): self
+    {
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+            $author->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Author $author
+     * @return $this
+     */
+    public function removeAuthor(Author $author): self
+    {
+        if ($this->authors->removeElement($author)) {
+            // set the owning side to null (unless already changed)
+            if ($author->getOwner() === $this) {
+                $author->setOwner(null);
             }
         }
 

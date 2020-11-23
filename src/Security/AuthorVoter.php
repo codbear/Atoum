@@ -2,13 +2,13 @@
 
 namespace App\Security;
 
-use App\Entity\Book;
+use App\Entity\Author;
 
 /**
  * Class BookVoter
  * @package App\Security
  */
-class BookVoter extends Voter
+class AuthorVoter extends Voter
 {
     /**
      * @param string $attribute
@@ -21,7 +21,7 @@ class BookVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Book) {
+        if (!$subject instanceof Author) {
             return false;
         }
 
