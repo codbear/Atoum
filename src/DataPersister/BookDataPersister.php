@@ -8,6 +8,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class BookDataPersister
@@ -23,18 +24,25 @@ class BookDataPersister implements ContextAwareDataPersisterInterface
      * @var Request|null
      */
     private $_request;
+    /**
+     * @var Security
+     */
+    private $_security;
 
     /**
      * BookDataPersister constructor.
      * @param EntityManagerInterface $entityManager
      * @param RequestStack $request
+     * @param Security $security
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        RequestStack $request
+        RequestStack $request,
+        Security $security
     ) {
         $this->_entityManager = $entityManager;
         $this->_request = $request->getCurrentRequest();
+        $this->_security = $security;
     }
 
     /**
@@ -52,6 +60,7 @@ class BookDataPersister implements ContextAwareDataPersisterInterface
     {
         if ($this->_request->getMethod() === 'POST') {
             $data->setCreatedAt(new DateTime());
+            $data->setOwner($this->_security->getUser());
         }
 
         $this->_entityManager->persist($data);

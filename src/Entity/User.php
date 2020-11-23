@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -51,6 +54,21 @@ class User implements UserInterface
     private $username;
 
     /**
+     * @ORM\OneToMany(targetEntity=Book::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups({"user:read"})
+     * @ApiSubresource
+     */
+    private $books;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->books = new ArrayCollection();
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
@@ -87,6 +105,15 @@ class User implements UserInterface
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    /**
+     * @param string $roles
+     * @return bool
+     */
+    public function hasRoles(string $roles): bool
+    {
+        return in_array($roles, $this->roles);
     }
 
     /**
@@ -153,6 +180,44 @@ class User implements UserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Book[]
+     */
+    public function getBooks(): Collection
+    {
+        return $this->books;
+    }
+
+    /**
+     * @param Book $book
+     * @return $this
+     */
+    public function addBook(Book $book): self
+    {
+        if (!$this->books->contains($book)) {
+            $this->books[] = $book;
+            $book->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Book $book
+     * @return $this
+     */
+    public function removeBook(Book $book): self
+    {
+        if ($this->books->removeElement($book)) {
+            // set the owning side to null (unless already changed)
+            if ($book->getOwner() === $this) {
+                $book->setOwner(null);
+            }
+        }
 
         return $this;
     }
