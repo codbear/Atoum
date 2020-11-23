@@ -71,6 +71,12 @@ class User implements UserInterface
     private $genres;
 
     /**
+     * @ORM\OneToMany(targetEntity=Publisher::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups({"user:read"})
+     */
+    private $publishers;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -78,6 +84,7 @@ class User implements UserInterface
         $this->books = new ArrayCollection();
         $this->authors = new ArrayCollection();
         $this->genres = new ArrayCollection();
+        $this->publishers = new ArrayCollection();
     }
 
     /**
@@ -304,6 +311,44 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($genre->getOwner() === $this) {
                 $genre->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Publisher[]
+     */
+    public function getPublishers(): Collection
+    {
+        return $this->publishers;
+    }
+
+    /**
+     * @param Publisher $publisher
+     * @return $this
+     */
+    public function addPublisher(Publisher $publisher): self
+    {
+        if (!$this->publishers->contains($publisher)) {
+            $this->publishers[] = $publisher;
+            $publisher->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Publisher $publisher
+     * @return $this
+     */
+    public function removePublisher(Publisher $publisher): self
+    {
+        if ($this->publishers->removeElement($publisher)) {
+            // set the owning side to null (unless already changed)
+            if ($publisher->getOwner() === $this) {
+                $publisher->setOwner(null);
             }
         }
 

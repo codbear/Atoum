@@ -4,17 +4,27 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Entity\Collection as PublisherCollection;
 use App\Repository\PublisherRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Entity\Collection as PublisherCollection;
 
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"publisher:read"}},
- *     denormalizationContext={"groups"={"publisher:write"}}
+ *     denormalizationContext={"groups"={"publisher:write"}},
+ *     collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"},
+ *         "post"={"security"="is_granted('ROLE_USER')"}
+ *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('get', object)"},
+ *         "patch"={"security"="is_granted('edit', object)"},
+ *         "put"={"security"="is_granted('edit', object)"},
+ *         "delete"={"security"="is_granted('delete', object)"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass=PublisherRepository::class)
  */
@@ -47,6 +57,13 @@ class Publisher
      * @ApiSubresource
      */
     private $collections;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="publishers")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"publisher:read"})
+     */
+    private $owner;
 
     /**
      * Publisher constructor.
@@ -156,6 +173,25 @@ class Publisher
                 $collection->setPublisher(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param User|null $owner
+     * @return $this
+     */
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }

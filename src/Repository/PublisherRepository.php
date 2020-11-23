@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Publisher[]    findAll()
  * @method Publisher[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PublisherRepository extends ServiceEntityRepository
+class PublisherRepository extends ServiceEntityRepository implements OwnedEntityRepositoryInterface
 {
     /**
      * PublisherRepository constructor.
@@ -23,32 +23,17 @@ class PublisherRepository extends ServiceEntityRepository
         parent::__construct($registry, Publisher::class);
     }
 
-    // /**
-    //  * @return Publisher[] Returns an array of Publisher objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param $ownerId
+     * @return Publisher[] Return an array of Publisher objects
+     */
+    function findByOwnerId($ownerId)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('p.owner = :val')
+            ->setParameter('val', $ownerId)
             ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Publisher
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
