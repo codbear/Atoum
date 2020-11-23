@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Genre[]    findAll()
  * @method Genre[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GenreRepository extends ServiceEntityRepository
+class GenreRepository extends ServiceEntityRepository implements OwnedEntityRepositoryInterface
 {
     /**
      * GenreRepository constructor.
@@ -23,32 +23,17 @@ class GenreRepository extends ServiceEntityRepository
         parent::__construct($registry, Genre::class);
     }
 
-    // /**
-    //  * @return Genre[] Returns an array of Genre objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param $ownerId
+     * @return Genre[] Return an array of Author objects
+     */
+    public function findByOwnerId($ownerId)
     {
         return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('g.owner = :val')
+            ->setParameter('val', $ownerId)
             ->orderBy('g.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Genre
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

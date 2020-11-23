@@ -27,14 +27,13 @@ class BookRepository extends ServiceEntityRepository
      * @param $ownerId
      * @return Book[] Return an array of Book objects
      */
-    public function getBooksByOwnerId($ownerId)
+    public function findByOwnerId($ownerId)
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.owner = :val')
             ->setParameter('val', $ownerId)
             ->orderBy('b.id', 'ASC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

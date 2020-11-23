@@ -2,19 +2,19 @@
 
 namespace App\DataPersister;
 
-use App\Entity\Author;
+use App\Entity\Genre;
 
 /**
- * Class AuthorDataPersister
+ * Class GenreDataPersister
  * @package App\DataPersister
  */
-class AuthorDataPersister extends DataPersister
+class GenreDataPersister extends DataPersister
 {
     /**
      * @inheritDoc
      */
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Author;
+        return $data instanceof Genre;
     }
 }
