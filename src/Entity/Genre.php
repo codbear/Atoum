@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\GenreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -46,7 +45,6 @@ class Genre
     /**
      * @ORM\ManyToMany(targetEntity=Book::class, mappedBy="genres")
      * @Groups({"genre:read"})
-     * @ApiSubresource
      */
     private $books;
 

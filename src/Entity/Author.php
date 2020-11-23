@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\AuthorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -46,7 +45,6 @@ class Author
     /**
      * @ORM\ManyToMany(targetEntity=Book::class, mappedBy="authors")
      * @Groups({"author:read"})
-     * @ApiSubresource
      */
     private $books;
 

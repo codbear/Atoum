@@ -47,7 +47,6 @@ class Publisher
     /**
      * @ORM\OneToMany(targetEntity=Book::class, mappedBy="publisher", orphanRemoval=true)
      * @Groups({"publisher:read"})
-     * @ApiSubresource
      */
     private $books;
 
