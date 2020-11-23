@@ -9,6 +9,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Class BookDataPersister
+ * @package App\DataPersister
+ */
 class BookDataPersister implements ContextAwareDataPersisterInterface
 {
     /**
@@ -20,6 +24,11 @@ class BookDataPersister implements ContextAwareDataPersisterInterface
      */
     private $_request;
 
+    /**
+     * BookDataPersister constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param RequestStack $request
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
         RequestStack $request

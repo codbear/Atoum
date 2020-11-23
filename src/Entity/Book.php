@@ -107,22 +107,35 @@ class Book
      */
     private $authors;
 
+    /**
+     * Book constructor.
+     */
     public function __construct()
     {
         $this->genres = new ArrayCollection();
         $this->authors = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     * @return $this
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -130,11 +143,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getIsbn(): ?string
     {
         return $this->isbn;
     }
 
+    /**
+     * @param string|null $isbn
+     * @return $this
+     */
     public function setIsbn(?string $isbn): self
     {
         $this->isbn = $isbn;
@@ -142,11 +162,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getVolume(): ?int
     {
         return $this->volume;
     }
 
+    /**
+     * @param int|null $volume
+     * @return $this
+     */
     public function setVolume(?int $volume): self
     {
         $this->volume = $volume;
@@ -154,11 +181,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * @param string|null $description
+     * @return $this
+     */
     public function setDescription(?string $description): self
     {
         $this->description = $description;
@@ -166,11 +200,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getObservations(): ?string
     {
         return $this->observations;
     }
 
+    /**
+     * @param string|null $observations
+     * @return $this
+     */
     public function setObservations(?string $observations): self
     {
         $this->observations = $observations;
@@ -178,11 +219,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getHasBeenRead(): ?bool
     {
         return $this->hasBeenRead;
     }
 
+    /**
+     * @param bool $hasBeenRead
+     * @return $this
+     */
     public function setHasBeenRead(bool $hasBeenRead): self
     {
         $this->hasBeenRead = $hasBeenRead;
@@ -190,11 +238,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getIsEbook(): ?bool
     {
         return $this->isEbook;
     }
 
+    /**
+     * @param bool $isEbook
+     * @return $this
+     */
     public function setIsEbook(bool $isEbook): self
     {
         $this->isEbook = $isEbook;
@@ -202,11 +257,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getPublicationYear(): ?int
     {
         return $this->publicationYear;
     }
 
+    /**
+     * @param int|null $publicationYear
+     * @return $this
+     */
     public function setPublicationYear(?int $publicationYear): self
     {
         $this->publicationYear = $publicationYear;
@@ -214,11 +276,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return DateTimeInterface|null
+     */
     public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
+    /**
+     * @param DateTimeInterface $createdAt
+     * @return $this
+     */
     public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
@@ -226,11 +295,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return Publisher|null
+     */
     public function getPublisher(): ?Publisher
     {
         return $this->publisher;
     }
 
+    /**
+     * @param Publisher|null $publisher
+     * @return $this
+     */
     public function setPublisher(?Publisher $publisher): self
     {
         $this->publisher = $publisher;
@@ -246,6 +322,10 @@ class Book
         return $this->genres;
     }
 
+    /**
+     * @param Genre $genre
+     * @return $this
+     */
     public function addGenre(Genre $genre): self
     {
         if (!$this->genres->contains($genre)) {
@@ -255,6 +335,10 @@ class Book
         return $this;
     }
 
+    /**
+     * @param Genre $genre
+     * @return $this
+     */
     public function removeGenre(Genre $genre): self
     {
         $this->genres->removeElement($genre);
@@ -262,11 +346,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return BindingFormat|null
+     */
     public function getBindingFormat(): ?BindingFormat
     {
         return $this->bindingFormat;
     }
 
+    /**
+     * @param BindingFormat|null $bindingFormat
+     * @return $this
+     */
     public function setBindingFormat(?BindingFormat $bindingFormat): self
     {
         $this->bindingFormat = $bindingFormat;
@@ -282,6 +373,10 @@ class Book
         return $this->authors;
     }
 
+    /**
+     * @param Author $author
+     * @return $this
+     */
     public function addAuthor(Author $author): self
     {
         if (!$this->authors->contains($author)) {
@@ -291,6 +386,10 @@ class Book
         return $this;
     }
 
+    /**
+     * @param Author $author
+     * @return $this
+     */
     public function removeAuthor(Author $author): self
     {
         $this->authors->removeElement($author);

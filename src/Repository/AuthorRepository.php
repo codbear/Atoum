@@ -14,6 +14,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AuthorRepository extends ServiceEntityRepository
 {
+    /**
+     * AuthorRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Author::class);
@@ -37,6 +41,11 @@ class AuthorRepository extends ServiceEntityRepository
     */
 
 
+    /**
+     * @param $value
+     * @return Author|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findOneByName($value): ?Author
     {
         return $this->createQueryBuilder('a')

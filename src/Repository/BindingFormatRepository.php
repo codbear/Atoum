@@ -14,6 +14,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BindingFormatRepository extends ServiceEntityRepository
 {
+    /**
+     * BindingFormatRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BindingFormat::class);
