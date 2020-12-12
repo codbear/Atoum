@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use App\Entity\Collection as PublisherCollection;
 use App\Repository\PublisherRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -51,13 +50,6 @@ class Publisher
     private $books;
 
     /**
-     * @ORM\OneToMany(targetEntity=PublisherCollection::class, mappedBy="publisher", orphanRemoval=true)
-     * @Groups({"publisher:read"})
-     * @ApiSubresource
-     */
-    private $collections;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="publishers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"publisher:read"})
@@ -70,7 +62,6 @@ class Publisher
     public function __construct()
     {
         $this->books = new ArrayCollection();
-        $this->collections = new ArrayCollection();
     }
 
     /**
@@ -132,44 +123,6 @@ class Publisher
             // set the owning side to null (unless already changed)
             if ($book->getPublisher() === $this) {
                 $book->setPublisher(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PublisherCollection[]
-     */
-    public function getCollections(): Collection
-    {
-        return $this->collections;
-    }
-
-    /**
-     * @param \App\Entity\Collection $collection
-     * @return $this
-     */
-    public function addCollection(PublisherCollection $collection): self
-    {
-        if (!$this->collections->contains($collection)) {
-            $this->collections[] = $collection;
-            $collection->setPublisher($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param \App\Entity\Collection $collection
-     * @return $this
-     */
-    public function removeCollection(PublisherCollection $collection): self
-    {
-        if ($this->collections->removeElement($collection)) {
-            // set the owning side to null (unless already changed)
-            if ($collection->getPublisher() === $this) {
-                $collection->setPublisher(null);
             }
         }
 
