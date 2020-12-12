@@ -13,7 +13,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"book:read"}},
- *     denormalizationContext={"groups"={"book:write"}}
+ *     denormalizationContext={"groups"={"book:write"}},
+ *     collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"},
+ *         "post"={"security"="is_granted('ROLE_USER')"}
+ *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('get', object)"},
+ *         "patch"={"security"="is_granted('edit', object)"},
+ *         "put"={"security"="is_granted('edit', object)"},
+ *         "delete"={"security"="is_granted('delete', object)"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass=BookRepository::class)
  */
@@ -106,6 +116,13 @@ class Book
      * @Groups({"book:read", "book:write"})
      */
     private $authors;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="books")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"book:read"})
+     */
+    private $owner;
 
     /**
      * Book constructor.
@@ -329,7 +346,7 @@ class Book
     public function addGenre(Genre $genre): self
     {
         if (!$this->genres->contains($genre)) {
-            $this->authors[] = $genre;
+            $this->genres[] = $genre;
         }
 
         return $this;
@@ -393,6 +410,25 @@ class Book
     public function removeAuthor(Author $author): self
     {
         $this->authors->removeElement($author);
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param User|null $owner
+     * @return $this
+     */
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }

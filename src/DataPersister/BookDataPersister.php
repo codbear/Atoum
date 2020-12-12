@@ -2,41 +2,15 @@
 
 namespace App\DataPersister;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Book;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class BookDataPersister
  * @package App\DataPersister
  */
-class BookDataPersister implements ContextAwareDataPersisterInterface
+class BookDataPersister extends DataPersister
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $_entityManager;
-    /**
-     * @var Request|null
-     */
-    private $_request;
-
-    /**
-     * BookDataPersister constructor.
-     * @param EntityManagerInterface $entityManager
-     * @param RequestStack $request
-     */
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        RequestStack $request
-    ) {
-        $this->_entityManager = $entityManager;
-        $this->_request = $request->getCurrentRequest();
-    }
-
     /**
      * @inheritDoc
      */
@@ -50,20 +24,12 @@ class BookDataPersister implements ContextAwareDataPersisterInterface
      */
     public function persist($data, array $context = [])
     {
-        if ($this->_request->getMethod() === 'POST') {
+        if ($this->request->getMethod() === 'POST') {
             $data->setCreatedAt(new DateTime());
+            $data->setOwner($this->security->getUser());
         }
 
-        $this->_entityManager->persist($data);
-        $this->_entityManager->flush();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function remove($data, array $context = [])
-    {
-        $this->_entityManager->remove($data);
-        $this->_entityManager->flush();
+        $this->entityManager->persist($data);
+        $this->entityManager->flush();
     }
 }

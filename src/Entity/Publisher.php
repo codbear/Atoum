@@ -9,12 +9,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Entity\Collection as PublisherCollection;
 
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"publisher:read"}},
- *     denormalizationContext={"groups"={"publisher:write"}}
+ *     denormalizationContext={"groups"={"publisher:write"}},
+ *     collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"},
+ *         "post"={"security"="is_granted('ROLE_USER')"}
+ *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('get', object)"},
+ *         "patch"={"security"="is_granted('edit', object)"},
+ *         "put"={"security"="is_granted('edit', object)"},
+ *         "delete"={"security"="is_granted('delete', object)"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass=PublisherRepository::class)
  */
@@ -37,16 +46,15 @@ class Publisher
     /**
      * @ORM\OneToMany(targetEntity=Book::class, mappedBy="publisher", orphanRemoval=true)
      * @Groups({"publisher:read"})
-     * @ApiSubresource
      */
     private $books;
 
     /**
-     * @ORM\OneToMany(targetEntity=PublisherCollection::class, mappedBy="publisher", orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="publishers")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"publisher:read"})
-     * @ApiSubresource
      */
-    private $collections;
+    private $owner;
 
     /**
      * Publisher constructor.
@@ -54,7 +62,6 @@ class Publisher
     public function __construct()
     {
         $this->books = new ArrayCollection();
-        $this->collections = new ArrayCollection();
     }
 
     /**
@@ -123,39 +130,20 @@ class Publisher
     }
 
     /**
-     * @return Collection|PublisherCollection[]
+     * @return User|null
      */
-    public function getCollections(): Collection
+    public function getOwner(): ?User
     {
-        return $this->collections;
+        return $this->owner;
     }
 
     /**
-     * @param \App\Entity\Collection $collection
+     * @param User|null $owner
      * @return $this
      */
-    public function addCollection(PublisherCollection $collection): self
+    public function setOwner(?User $owner): self
     {
-        if (!$this->collections->contains($collection)) {
-            $this->collections[] = $collection;
-            $collection->setPublisher($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param \App\Entity\Collection $collection
-     * @return $this
-     */
-    public function removeCollection(PublisherCollection $collection): self
-    {
-        if ($this->collections->removeElement($collection)) {
-            // set the owning side to null (unless already changed)
-            if ($collection->getPublisher() === $this) {
-                $collection->setPublisher(null);
-            }
-        }
+        $this->owner = $owner;
 
         return $this;
     }

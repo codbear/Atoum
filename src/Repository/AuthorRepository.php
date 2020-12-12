@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Author[]    findAll()
  * @method Author[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AuthorRepository extends ServiceEntityRepository
+class AuthorRepository extends ServiceEntityRepository implements OwnedEntityRepositoryInterface
 {
     /**
      * AuthorRepository constructor.
@@ -23,35 +23,17 @@ class AuthorRepository extends ServiceEntityRepository
         parent::__construct($registry, Author::class);
     }
 
-    // /**
-    //  * @return Author[] Returns an array of Author objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-
     /**
-     * @param $value
-     * @return Author|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @param $ownerId
+     * @return Author[] Return an array of Author objects
      */
-    public function findOneByName($value): ?Author
+    public function findByOwnerId($ownerId)
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.name = :val')
-            ->setParameter('val', $value)
+            ->andWhere('a.owner = :val')
+            ->setParameter('val', $ownerId)
+            ->orderBy('a.id', 'ASC')
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 }

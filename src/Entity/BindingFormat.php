@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\BindingFormatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +12,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"bindingFormat:read"}},
- *     denormalizationContext={"groups"={"bindingFormat:write"}}
+ *     denormalizationContext={"groups"={"bindingFormat:write"}},
+ *     collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"}
+ *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')"}
+ *     }
  * )
  * @ORM\Entity(repositoryClass=BindingFormatRepository::class)
  */
@@ -29,14 +34,13 @@ class BindingFormat
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"bindingFormat:read", "bindingFormat:write"})
+     * @Groups({"bindingFormat:read"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=Book::class, mappedBy="bindingFormat", orphanRemoval=true)
      * @Groups({"bindingFormat:read"})
-     * @ApiSubresource
      */
     private $books;
 
