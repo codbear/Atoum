@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 abstract class Voter extends \Symfony\Component\Security\Core\Authorization\Voter\Voter
 {
     const GET = 'get';
+    const POST = 'post';
     const EDIT = 'edit';
     const DELETE = 'delete';
 
@@ -21,7 +22,7 @@ abstract class Voter extends \Symfony\Component\Security\Core\Authorization\Vote
      */
     protected function isActionGranted($action)
     {
-        return in_array($action, [self::GET, self::EDIT, self::DELETE]);
+        return in_array($action, [self::GET, self::POST, self::EDIT, self::DELETE]);
     }
 
     /**
@@ -48,6 +49,6 @@ abstract class Voter extends \Symfony\Component\Security\Core\Authorization\Vote
             return false;
         }
 
-        return $user->hasRoles('ROLE_ADMIN') || $user === $subject->getOwner();
+        return $user === $subject->getOwner();
     }
 }

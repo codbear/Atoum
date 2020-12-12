@@ -5,7 +5,7 @@ namespace App\Security;
 use App\Entity\Publisher;
 
 /**
- * Class BookVoter
+ * Class PublisherVoter
  * @package App\Security
  */
 class PublisherVoter extends Voter

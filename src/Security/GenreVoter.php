@@ -5,7 +5,7 @@ namespace App\Security;
 use App\Entity\Genre;
 
 /**
- * Class BookVoter
+ * Class GenreVoter
  * @package App\Security
  */
 class GenreVoter extends Voter
