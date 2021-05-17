@@ -5,3 +5,8 @@ gesdinet_jwt_refresh_token:
 login:
     path: /token/get
     methods: POST
+
+register:
+    path: /token/register
+    controller: App\Controller\AuthController::register
+    methods: POST

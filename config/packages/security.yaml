@@ -24,6 +24,10 @@ security:
             pattern: ^/token/refresh
             stateless: true
             anonymous: true
+        register:
+            pattern: ^/token/register$
+            stateless: true
+            anonymous: true
         login:
             pattern: ^/token/get$
             stateless: true
