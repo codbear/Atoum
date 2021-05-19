@@ -13,11 +13,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *     normalizationContext={"groups"={"user:read"}},
  *     denormalizationContext={"groups"={"user:write"}},
- *     collectionOperations={
- *         "post"
- *     },
+ *     collectionOperations={},
  *     itemOperations={
- *         "get",
  *         "patch",
  *         "delete"
  *     }
@@ -52,6 +49,18 @@ class User implements UserInterface, JWTUserInterface
      * @Groups("user:write")
      */
     private string $password;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"user:read", "user:write"})
+     */
+    private ?string $firstName;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"user:read", "user:write"})
+     */
+    private ?string $lastName;
 
     /**
      * @return int|null
@@ -171,5 +180,29 @@ class User implements UserInterface, JWTUserInterface
     public static function createFromPayload($id, array $payload): User
     {
         return (new User())->setId($id)->setEmail($payload['email'] ?? '');
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
     }
 }

@@ -3,5 +3,10 @@ gesdinet_jwt_refresh_token:
     controller: gesdinet.jwtrefreshtoken::refresh
 
 login:
-    path: /login
+    path: /token/get
+    methods: POST
+
+register:
+    path: /token/register
+    controller: App\Controller\RegisterController::register
     methods: POST

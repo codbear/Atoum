@@ -16,16 +16,20 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        refresh:
-            pattern: ^/token/refresh
-            stateless: true
-            anonymous: true
         docs:
             pattern: ^/docs
             stateless: true
             anonymous: true
+        refresh:
+            pattern: ^/token/refresh
+            stateless: true
+            anonymous: true
+        register:
+            pattern: ^/token/register$
+            stateless: true
+            anonymous: true
         login:
-            pattern: ^/login$
+            pattern: ^/token/get$
             stateless: true
             anonymous: true
             provider: app_user_provider
