@@ -8,5 +8,5 @@ login:
 
 register:
     path: /token/register
-    controller: App\Controller\AuthController::register
+    controller: App\Controller\RegisterController::register
     methods: POST
