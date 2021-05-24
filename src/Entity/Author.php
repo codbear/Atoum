@@ -37,7 +37,7 @@ class Author
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"author:read", "author:write", "book:read", "book:write"})
+     * @Groups({"author:read", "author:write", "book:read"})
      */
     private $name;
 
@@ -50,7 +50,7 @@ class Author
 
     /**
      * @ORM\ManyToMany(targetEntity=Book::class, mappedBy="authors")
-     * @Groups({"author:read", "author:write"})
+     * @Groups({"author:read"})
      */
     private $books;
 

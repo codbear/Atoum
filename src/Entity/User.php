@@ -61,21 +61,27 @@ class User implements UserInterface, JWTUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Book::class, mappedBy="owner", orphanRemoval=true)
-     * @Groups({"user:read", "user:write"})
+     * @Groups("user:read")
      */
     private $books;
 
     /**
      * @ORM\OneToMany(targetEntity=Author::class, mappedBy="owner", orphanRemoval=true)
-     * @Groups({"user:read", "user:write"})
+     * @Groups("user:read")
      */
     private $authors;
 
     /**
      * @ORM\OneToMany(targetEntity=Genre::class, mappedBy="owner", orphanRemoval=true)
-     * @Groups({"user:read", "user:write"})
+     * @Groups("user:read")
      */
     private $genres;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Publisher::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups("user:read")
+     */
+    private $publishers;
 
     /**
      * User constructor.
@@ -85,6 +91,7 @@ class User implements UserInterface, JWTUserInterface
         $this->books = new ArrayCollection();
         $this->authors = new ArrayCollection();
         $this->genres = new ArrayCollection();
+        $this->publishers = new ArrayCollection();
     }
 
     /**
@@ -337,6 +344,36 @@ class User implements UserInterface, JWTUserInterface
             // set the owning side to null (unless already changed)
             if ($genre->getOwner() === $this) {
                 $genre->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Publisher[]
+     */
+    public function getPublishers(): Collection
+    {
+        return $this->publishers;
+    }
+
+    public function addPublisher(Publisher $publisher): self
+    {
+        if (!$this->publishers->contains($publisher)) {
+            $this->publishers[] = $publisher;
+            $publisher->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removePublisher(Publisher $publisher): self
+    {
+        if ($this->publishers->removeElement($publisher)) {
+            // set the owning side to null (unless already changed)
+            if ($publisher->getOwner() === $this) {
+                $publisher->setOwner(null);
             }
         }
 

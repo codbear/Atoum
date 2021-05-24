@@ -10,6 +10,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Author;
 use App\Entity\Book;
 use App\Entity\Genre;
+use App\Entity\Publisher;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
@@ -72,7 +73,12 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
      * @param QueryBuilder $queryBuilder
      */
     private function addWhere(string $resourceClass, QueryBuilder $queryBuilder) {
-        $isResourceOwned = $resourceClass === Book::class || $resourceClass === Author::class || $resourceClass === Genre::class;
+        $isResourceOwned =
+            $resourceClass === Book::class
+            || $resourceClass === Author::class
+            || $resourceClass === Genre::class
+            || $resourceClass === Publisher::class;
+
         if ($isResourceOwned) {
             $alias = $queryBuilder->getRootAliases()[0];
             $queryBuilder

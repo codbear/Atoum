@@ -108,7 +108,7 @@ class Book
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="books")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"book:read", "book:write"})
+     * @Groups("book:read")
      */
     private $owner;
 
@@ -123,6 +123,13 @@ class Book
      * @Groups({"book:read", "book:write"})
      */
     private $genres;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Publisher::class, inversedBy="books")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"book:read", "book:write"})
+     */
+    private $publisher;
 
     /**
      * Book constructor.
@@ -376,6 +383,18 @@ class Book
     public function removeGenre(Genre $genre): self
     {
         $this->genres->removeElement($genre);
+
+        return $this;
+    }
+
+    public function getPublisher(): ?Publisher
+    {
+        return $this->publisher;
+    }
+
+    public function setPublisher(?Publisher $publisher): self
+    {
+        $this->publisher = $publisher;
 
         return $this;
     }

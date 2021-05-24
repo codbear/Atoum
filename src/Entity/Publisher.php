@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\GenreRepository;
+use App\Repository\PublisherRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,8 +11,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     normalizationContext={"groups"={"genre:read"}},
- *     denormalizationContext={"groups"={"genre:write"}},
+ *     normalizationContext={"groups"={"publisher:read"}},
+ *     denormalizationContext={"groups"={"publisher:write"}},
  *     collectionOperations={
  *         "get",
  *         "post"
@@ -23,34 +23,34 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         "delete"
  *     }
  * )
- * @ORM\Entity(repositoryClass=GenreRepository::class)
+ * @ORM\Entity(repositoryClass=PublisherRepository::class)
  */
-class Genre
+class Publisher
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"genre:read", "book:read"})
+     * @Groups({"publisher:read", "book:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"genre:read", "genre:write", "book:read"})
+     * @Groups({"publisher:read", "publisher:write", "book:read"})
      */
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="genres")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="publishers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"genre:read", "book:read"})
+     * @Groups({"publisher:read", "book:read"})
      */
     private $owner;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Book::class, mappedBy="genres")
-     * @Groups("genre:read")
+     * @ORM\OneToMany(targetEntity=Book::class, mappedBy="publisher", orphanRemoval=true)
+     * @Groups("publisher:read")
      */
     private $books;
 
@@ -100,7 +100,7 @@ class Genre
     {
         if (!$this->books->contains($book)) {
             $this->books[] = $book;
-            $book->addGenre($this);
+            $book->setPublisher($this);
         }
 
         return $this;
@@ -109,7 +109,10 @@ class Genre
     public function removeBook(Book $book): self
     {
         if ($this->books->removeElement($book)) {
-            $book->removeGenre($this);
+            // set the owning side to null (unless already changed)
+            if ($book->getPublisher() === $this) {
+                $book->setPublisher(null);
+            }
         }
 
         return $this;
