@@ -72,12 +72,19 @@ class User implements UserInterface, JWTUserInterface
     private $authors;
 
     /**
+     * @ORM\OneToMany(targetEntity=Genre::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups({"user:read", "user:write"})
+     */
+    private $genres;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         $this->books = new ArrayCollection();
         $this->authors = new ArrayCollection();
+        $this->genres = new ArrayCollection();
     }
 
     /**
@@ -300,6 +307,36 @@ class User implements UserInterface, JWTUserInterface
             // set the owning side to null (unless already changed)
             if ($author->getOwner() === $this) {
                 $author->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Genre[]
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
+            $genre->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        if ($this->genres->removeElement($genre)) {
+            // set the owning side to null (unless already changed)
+            if ($genre->getOwner() === $this) {
+                $genre->setOwner(null);
             }
         }
 

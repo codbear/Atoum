@@ -119,12 +119,19 @@ class Book
     private $authors;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Genre::class, inversedBy="books")
+     * @Groups({"book:read", "book:write"})
+     */
+    private $genres;
+
+    /**
      * Book constructor.
      */
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->authors = new ArrayCollection();
+        $this->genres = new ArrayCollection();
     }
 
     /**
@@ -345,6 +352,30 @@ class Book
     public function removeAuthor(Author $author): self
     {
         $this->authors->removeElement($author);
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGenres(): array
+    {
+        return $this->genres->getValues();
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        $this->genres->removeElement($genre);
 
         return $this;
     }

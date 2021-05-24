@@ -6,6 +6,7 @@ namespace App\Serializer;
 
 use App\Entity\Author;
 use App\Entity\Book;
+use App\Entity\Genre;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\Security;
@@ -60,7 +61,7 @@ class OwnedDenormalizer implements ContextAwareDenormalizerInterface, Denormaliz
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         $hasBeenCalled = $context[self::ALREADY_CALLED_DENORMALIZER] ?? false;
-        $isResourceOwned = $type === Book::class || $type === Author::class;
+        $isResourceOwned = $type === Book::class || $type === Author::class || $type === Genre::class;
 
         return $isResourceOwned && $hasBeenCalled === false;
     }
