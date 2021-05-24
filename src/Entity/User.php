@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,11 +15,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *     normalizationContext={"groups"={"user:read"}},
  *     denormalizationContext={"groups"={"user:write"}},
- *     collectionOperations={},
- *     itemOperations={
- *         "patch",
- *         "delete"
- *     }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
@@ -27,7 +24,7 @@ class User implements UserInterface, JWTUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("user:read")
+     * @Groups({"user:read", "book:read", "author:read"})
      */
     private ?int $id;
 
@@ -61,6 +58,41 @@ class User implements UserInterface, JWTUserInterface
      * @Groups({"user:read", "user:write"})
      */
     private ?string $lastName;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Book::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups("user:read")
+     */
+    private $books;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Author::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups("user:read")
+     */
+    private $authors;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Genre::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups("user:read")
+     */
+    private $genres;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Publisher::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups("user:read")
+     */
+    private $publishers;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->books = new ArrayCollection();
+        $this->authors = new ArrayCollection();
+        $this->genres = new ArrayCollection();
+        $this->publishers = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -182,11 +214,18 @@ class User implements UserInterface, JWTUserInterface
         return (new User())->setId($id)->setEmail($payload['email'] ?? '');
     }
 
+    /**
+     * @return string|null
+     */
     public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
+    /**
+     * @param string $firstName
+     * @return $this
+     */
     public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
@@ -194,14 +233,149 @@ class User implements UserInterface, JWTUserInterface
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
+    /**
+     * @param string $lastName
+     * @return $this
+     */
     public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Book[]
+     */
+    public function getBooks(): Collection
+    {
+        return $this->books;
+    }
+
+    /**
+     * @param Book $book
+     * @return $this
+     */
+    public function addBook(Book $book): self
+    {
+        if (!$this->books->contains($book)) {
+            $this->books[] = $book;
+            $book->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Book $book
+     * @return $this
+     */
+    public function removeBook(Book $book): self
+    {
+        if ($this->books->removeElement($book)) {
+            // set the owning side to null (unless already changed)
+            if ($book->getOwner() === $this) {
+                $book->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Author[]
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    public function addAuthor(Author $author): self
+    {
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+            $author->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(Author $author): self
+    {
+        if ($this->authors->removeElement($author)) {
+            // set the owning side to null (unless already changed)
+            if ($author->getOwner() === $this) {
+                $author->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Genre[]
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
+            $genre->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        if ($this->genres->removeElement($genre)) {
+            // set the owning side to null (unless already changed)
+            if ($genre->getOwner() === $this) {
+                $genre->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Publisher[]
+     */
+    public function getPublishers(): Collection
+    {
+        return $this->publishers;
+    }
+
+    public function addPublisher(Publisher $publisher): self
+    {
+        if (!$this->publishers->contains($publisher)) {
+            $this->publishers[] = $publisher;
+            $publisher->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removePublisher(Publisher $publisher): self
+    {
+        if ($this->publishers->removeElement($publisher)) {
+            // set the owning side to null (unless already changed)
+            if ($publisher->getOwner() === $this) {
+                $publisher->setOwner(null);
+            }
+        }
 
         return $this;
     }

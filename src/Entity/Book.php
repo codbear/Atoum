@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\BookRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -103,21 +105,68 @@ class Book
      */
     private ?\DateTimeInterface $createdAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="books")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups("book:read")
+     */
+    private $owner;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Author::class, inversedBy="books")
+     * @Groups({"book:read", "book:write"})
+     */
+    private $authors;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Genre::class, inversedBy="books")
+     * @Groups({"book:read", "book:write"})
+     */
+    private $genres;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Publisher::class, inversedBy="books")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"book:read", "book:write"})
+     */
+    private $publisher;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=BindingFormat::class)
+     * @Groups({"book:read", "book:write"})
+     */
+    private $bindingFormat;
+
+    /**
+     * Book constructor.
+     */
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->authors = new ArrayCollection();
+        $this->genres = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     * @return $this
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -125,11 +174,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getIsbn(): ?string
     {
         return $this->isbn;
     }
 
+    /**
+     * @param string|null $isbn
+     * @return $this
+     */
     public function setIsbn(?string $isbn): self
     {
         $this->isbn = $isbn;
@@ -137,11 +193,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * @param string|null $description
+     * @return $this
+     */
     public function setDescription(?string $description): self
     {
         $this->description = $description;
@@ -149,11 +212,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getVolume(): ?int
     {
         return $this->volume;
     }
 
+    /**
+     * @param int|null $volume
+     * @return $this
+     */
     public function setVolume(?int $volume): self
     {
         $this->volume = $volume;
@@ -161,11 +231,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getHasBeenRead(): ?bool
     {
         return $this->hasBeenRead;
     }
 
+    /**
+     * @param bool $hasBeenRead
+     * @return $this
+     */
     public function setHasBeenRead(bool $hasBeenRead): self
     {
         $this->hasBeenRead = $hasBeenRead;
@@ -173,11 +250,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getIsEbook(): ?bool
     {
         return $this->isEbook;
     }
 
+    /**
+     * @param bool $isEbook
+     * @return $this
+     */
     public function setIsEbook(bool $isEbook): self
     {
         $this->isEbook = $isEbook;
@@ -185,11 +269,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getObservations(): ?string
     {
         return $this->observations;
     }
 
+    /**
+     * @param string|null $observations
+     * @return $this
+     */
     public function setObservations(?string $observations): self
     {
         $this->observations = $observations;
@@ -197,11 +288,18 @@ class Book
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getPublicationYear(): ?int
     {
         return $this->publicationYear;
     }
 
+    /**
+     * @param int|null $publicationYear
+     * @return $this
+     */
     public function setPublicationYear(?int $publicationYear): self
     {
         $this->publicationYear = $publicationYear;
@@ -209,14 +307,112 @@ class Book
         return $this;
     }
 
+    /**
+     * @return \DateTimeInterface|null
+     */
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
     }
 
+    /**
+     * @param \DateTimeInterface $createdAt
+     * @return $this
+     */
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param User|null $owner
+     * @return $this
+     */
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAuthors(): array
+    {
+        return $this->authors->getValues();
+    }
+
+    public function addAuthor(Author $author): self
+    {
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(Author $author): self
+    {
+        $this->authors->removeElement($author);
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGenres(): array
+    {
+        return $this->genres->getValues();
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        $this->genres->removeElement($genre);
+
+        return $this;
+    }
+
+    public function getPublisher(): ?Publisher
+    {
+        return $this->publisher;
+    }
+
+    public function setPublisher(?Publisher $publisher): self
+    {
+        $this->publisher = $publisher;
+
+        return $this;
+    }
+
+    public function getBindingFormat(): ?BindingFormat
+    {
+        return $this->bindingFormat;
+    }
+
+    public function setBindingFormat(?BindingFormat $bindingFormat): self
+    {
+        $this->bindingFormat = $bindingFormat;
 
         return $this;
     }
