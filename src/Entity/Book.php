@@ -132,6 +132,12 @@ class Book
     private $publisher;
 
     /**
+     * @ORM\ManyToOne(targetEntity=BindingFormat::class)
+     * @Groups({"book:read", "book:write"})
+     */
+    private $bindingFormat;
+
+    /**
      * Book constructor.
      */
     public function __construct()
@@ -395,6 +401,18 @@ class Book
     public function setPublisher(?Publisher $publisher): self
     {
         $this->publisher = $publisher;
+
+        return $this;
+    }
+
+    public function getBindingFormat(): ?BindingFormat
+    {
+        return $this->bindingFormat;
+    }
+
+    public function setBindingFormat(?BindingFormat $bindingFormat): self
+    {
+        $this->bindingFormat = $bindingFormat;
 
         return $this;
     }
