@@ -24,7 +24,7 @@ class User implements UserInterface, JWTUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user:read", "book:read"})
+     * @Groups({"user:read", "book:read", "author:read"})
      */
     private ?int $id;
 
@@ -66,11 +66,18 @@ class User implements UserInterface, JWTUserInterface
     private $books;
 
     /**
+     * @ORM\OneToMany(targetEntity=Author::class, mappedBy="owner", orphanRemoval=true)
+     * @Groups({"user:read", "user:write"})
+     */
+    private $authors;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         $this->books = new ArrayCollection();
+        $this->authors = new ArrayCollection();
     }
 
     /**
@@ -263,6 +270,36 @@ class User implements UserInterface, JWTUserInterface
             // set the owning side to null (unless already changed)
             if ($book->getOwner() === $this) {
                 $book->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Author[]
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    public function addAuthor(Author $author): self
+    {
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+            $author->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(Author $author): self
+    {
+        if ($this->authors->removeElement($author)) {
+            // set the owning side to null (unless already changed)
+            if ($author->getOwner() === $this) {
+                $author->setOwner(null);
             }
         }
 

@@ -4,6 +4,7 @@
 namespace App\Serializer;
 
 
+use App\Entity\Author;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -59,8 +60,9 @@ class OwnedDenormalizer implements ContextAwareDenormalizerInterface, Denormaliz
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         $hasBeenCalled = $context[self::ALREADY_CALLED_DENORMALIZER] ?? false;
+        $isResourceOwned = $type === Book::class || $type === Author::class;
 
-        return $type === Book::class && $hasBeenCalled === false;
+        return $isResourceOwned && $hasBeenCalled === false;
     }
 
     /**

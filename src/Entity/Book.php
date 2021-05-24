@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\BookRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -111,11 +113,18 @@ class Book
     private $owner;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Author::class, inversedBy="books")
+     * @Groups({"book:read", "book:write"})
+     */
+    private $authors;
+
+    /**
      * Book constructor.
      */
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->authors = new ArrayCollection();
     }
 
     /**
@@ -312,6 +321,30 @@ class Book
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAuthors(): array
+    {
+        return $this->authors->getValues();
+    }
+
+    public function addAuthor(Author $author): self
+    {
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(Author $author): self
+    {
+        $this->authors->removeElement($author);
 
         return $this;
     }

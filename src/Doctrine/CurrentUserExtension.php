@@ -7,6 +7,7 @@ namespace App\Doctrine;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Entity\Author;
 use App\Entity\Book;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
@@ -70,7 +71,8 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
      * @param QueryBuilder $queryBuilder
      */
     private function addWhere(string $resourceClass, QueryBuilder $queryBuilder) {
-        if ($resourceClass === Book::class) {
+        $isResourceOwned = $resourceClass === Book::class || $resourceClass === Author::class;
+        if ($isResourceOwned) {
             $alias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
                 ->andWhere("$alias.owner = :currentUser")
